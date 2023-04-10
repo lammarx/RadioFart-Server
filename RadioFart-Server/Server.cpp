@@ -3,10 +3,14 @@
 Server::Server()
 {
 	sysLog.announceServerStarted();
+	sysLog.drawAsciiArt();
 	WSADATA wsaData;
 	ADDRINFO hints;
 	clientSocket = INVALID_SOCKET;
 	listenSocket = INVALID_SOCKET;
+	AudioDevicePtr audioDevice = OpenDevice();
+	if (!audioDevice) sysLog.soundError("Audio Device creating failed.");
+	currentSound = OpenSound(audioDevice, "sound.wav", true);
 
 	// CHECK
 	clientResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -24,19 +28,19 @@ Server::Server()
 
 	// CHECK
 	listenSocket = socket(addrResult->ai_family, addrResult->ai_socktype, addrResult->ai_protocol);
-	sysLog.error("Socket creation failed", listenSocket, addrResult, 0);
+	sysLog.error("Socket creation failed.", listenSocket, addrResult, 0);
 
 	// CHECK
 	clientResult = bind(listenSocket, addrResult->ai_addr, (int)addrResult->ai_addrlen);
-	sysLog.error("Binding socket failed", listenSocket, clientResult, addrResult, 1);
+	sysLog.error("Binding socket failed.", listenSocket, clientResult, addrResult, 1);
 	
 	// CHECK
 	clientResult = listen(listenSocket, SOMAXCONN);
-	sysLog.error("Listening socket failed", listenSocket, clientResult, addrResult, 0);
+	sysLog.error("Listening socket failed.", listenSocket, clientResult, addrResult, 0);
 	
 	// CHECK
 	clientSocket = accept(listenSocket, NULL, NULL);
-	sysLog.error("Accepting socket failed", listenSocket, addrResult, 0);
+	sysLog.error("Accepting socket failed.", listenSocket, addrResult, 0);
 	
 
 	closesocket(listenSocket);
@@ -51,12 +55,13 @@ void Server::connectClient()
 		clientResult = recv(clientSocket, recvBuffer, 512, 0);
 		if (clientResult > 0)
 		{
+			sysLog.announceClientConnected();
 			std::cout << "Recieved " << clientResult << "bytes" << std::endl;
 			std::cout << "Recieved data: " << recvBuffer << std::endl;
 			clientResult = send(clientSocket, sendBuffer, (int)strlen(sendBuffer), 0);
 			if (clientResult == SOCKET_ERROR)
 			{
-				std::cout << "Failed to send data back" << std::endl;
+				std::cout << "Failed to send data back." << std::endl;
 				clear();
 			}
 		}
@@ -66,13 +71,13 @@ void Server::connectClient()
 		}
 		else
 		{
-			std::cout << "recv failed with error" << std::endl;
+			std::cout << "recv failed with error." << std::endl;
 			clear();
 		}
 	} while (clientResult > 0);
 
 	clientResult = shutdown(clientSocket, SD_SEND);
-	sysLog.error("Shutdown client socket failed", clientSocket, clientResult, addrResult, 0);
+	sysLog.error("Shutdown client socket failed.", clientSocket, clientResult, addrResult, 0);
 
 	closesocket(clientSocket);
 	freeaddrinfo(addrResult);

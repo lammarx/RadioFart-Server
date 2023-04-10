@@ -6,6 +6,12 @@ void SystemLog::announceServerStarted()
 	std::cout << termcolor::green << "Server started." << termcolor::reset << std::endl;
 }
 
+void SystemLog::announceClientConnected()
+{
+	systemOutput();
+	std::cout << termcolor::green << "Client connected." << termcolor::reset << std::endl;
+}
+
 void SystemLog::error(const char* text, int result)
 {
 	if (result != 0)
@@ -52,6 +58,17 @@ void SystemLog::error(
 		WSACleanup();
 		exit(1);
 	}
+}
+
+void SystemLog::drawAsciiArt()
+{
+	std::ifstream asciiArt("asciiArt.txt");
+	std::string line;
+	while (std::getline(asciiArt, line))
+	{
+		std::cout << line << std::endl;
+	}
+	asciiArt.close();
 }
 
 void SystemLog::systemOutput()
