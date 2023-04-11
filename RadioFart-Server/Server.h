@@ -1,27 +1,27 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN
-
 #include <iostream>
-#include <Windows.h>
-#include <WinSock2.h>
-#include <WS2tcpip.h>
+#include <vector>
+#include <SFML/Network.hpp>
+#include <SFML/Audio.hpp>
 #include "SystemLog.h"
 
 class Server
 {
 public:
 	Server();
-	void connectClient();
-	void clear();
-	int end();
+	void run();
 private:
-	SystemLog sysLog;
-	int clientResult;
-	SOCKET clientSocket;
-	SOCKET listenSocket;
-	char recvBuffer[512];
-	ADDRINFO* addrResult = NULL;
-	const char* sendBuffer = "Hello from Serv";
+	bool running = true;
+
+	SystemLog systemLog;
+	sf::UdpSocket socket;
+	std::ifstream config;
+	char data[128];
+	std::size_t received;
+	sf::IpAddress sender;
+	unsigned short senderPort;
+	void readConfig();
+	sf::IpAddress ip;
 };
 

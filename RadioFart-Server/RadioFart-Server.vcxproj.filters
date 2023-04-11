@@ -24,12 +24,18 @@
     <ClCompile Include="SystemLog.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="SystemLog.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

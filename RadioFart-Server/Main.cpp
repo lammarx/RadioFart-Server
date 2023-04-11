@@ -3,6 +3,4 @@
 int main()
 {
 	Server server;
-	server.connectClient();
-	return server.end();
 }
